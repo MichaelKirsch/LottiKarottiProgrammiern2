@@ -12,15 +12,15 @@ Spieler::Spieler(int SpielerID, int anzahlHasen) :m_ID(SpielerID) {
 }
 
 bool Spieler::zieht(Spielfeld &feld, Kartenstapel &stapel) {
-    for(auto it = hasen.begin();it!=hasen.end();++it)
+    for(Hase& n:hasen )
     {
-        if(it->feldID==feld.lochposition && it->aktiv)
+        if(n.feldID==feld.lochposition && n.aktiv)
         {
             //std::cout << "Spieler" << m_ID << " hat einen Hasen verloren auf Position: "<<it->feldID<<std::endl;
             verloreneHasen++;
             feld.felder[feld.lochposition].istBesetzt = false;
-            it->aktiv = false;
-            it-> tot = true;
+            n.aktiv = false;
+            n.tot = true;
         }
     }
 
@@ -34,7 +34,7 @@ bool Spieler::zieht(Spielfeld &feld, Kartenstapel &stapel) {
     {
         if(letzterErzeugterHase<maximaleHasen)
         {
-            neuenHasenSetzen(&gezogeneKarte,&feld);
+            neuerHase(gezogeneKarte, feld);
         } else
         {
             return (hasenBewegen(gezogeneKarte,feld));
@@ -43,23 +43,22 @@ bool Spieler::zieht(Spielfeld &feld, Kartenstapel &stapel) {
     return false;
 }
 
-void Spieler::neuenHasenSetzen(Karte *karte, Spielfeld* feld) {
-    int stepsNeeded = *karte;
-    for(int x =0;x<feld->felder.size();x++)//step through all fields
+void Spieler::neuerHase(Karte &karte, Spielfeld& feld) {
+    int stepsNeeded = karte;
+    for(int x =0;x<feld.felder.size();x++)//step through all fields
     {
-        if(!feld->felder[x].istBesetzt)
+        if(!feld.felder[x].istBesetzt)
         {
             stepsNeeded--;
             if(stepsNeeded==0)
             {
                 hasen[letzterErzeugterHase].aktiv = true;
                 hasen[letzterErzeugterHase].feldID=x;
-                feld->felder[x].istBesetzt = true;
+                feld.felder[x].istBesetzt = true;
             }
         }
 
     }
-
     letzterErzeugterHase++;
 }
 

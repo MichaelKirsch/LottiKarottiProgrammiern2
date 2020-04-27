@@ -3,15 +3,15 @@
 #include "Spiel.h"
 
 Spiel::Spiel(int spielerAnzahl, int felder, int hasenprospieler) {
-    feld.erzeugen(felder);
-    allRenderAbleObjects.emplace_back(&feld);
+    m_feld.erzeugen(felder);
+    m_toRender.emplace_back(&m_feld);
     for(int x =0;x<spielerAnzahl;x++)
     {
-        auto pointerzuSpieler = alleSpieler.emplace_back(std::make_shared<Spieler>(x,hasenprospieler));
-        allRenderAbleObjects.emplace_back(pointerzuSpieler.get());
+        auto pointerzuSpieler = m_alleSpieler.emplace_back(std::make_shared<Spieler>(x, hasenprospieler));
+        m_toRender.emplace_back(pointerzuSpieler.get());
         for(auto& hase:pointerzuSpieler->getHasen())
         {
-            allRenderAbleObjects.emplace_back(&hase);
+            m_toRender.emplace_back(&hase);
         }
     }
 }
@@ -19,49 +19,51 @@ Spiel::Spiel(int spielerAnzahl, int felder, int hasenprospieler) {
 void Spiel::run() {
     int Spielzug =0;
     bool keine_aktiven_hasen_mehr = false;
-    while(!win&& !keine_aktiven_hasen_mehr)
+    while(!m_win && !keine_aktiven_hasen_mehr)
     {
-        for(auto& spieler:alleSpieler)
+        for(auto& spieler:m_alleSpieler)
         {
-            win = spieler->zieht(feld,stapel);
-            if(win)
+            m_win = spieler->zieht(m_feld, m_stapel);
+            if(m_win)
             {
                 std::cout << "Spieler "<< spieler->getID() << " gewinnt!!" <<std::endl;
                 break;
             }
         }
-
-        bool nochaktivehasen = false;
-        for(auto& spieler:alleSpieler)
+        if(!m_win)
         {
-            if(spieler->verloreneHasen < spieler->maximaleHasen)
-                nochaktivehasen= true;
-        }
-        if(!nochaktivehasen)
-        {
-            keine_aktiven_hasen_mehr = true;
-            std::cout << "Keine Hasen Mehr" << std::endl;
-        }
-        std::cout << "Spielrunde:"<<Spielzug << " ";
-        for(int x =0;x<feld.felder.size();x++)
-        {
-            auto z= feld.felder[x];
-            if(z.istBesetzt)
+            bool nochaktivehasen = false;
+            for(auto& spieler:m_alleSpieler)
             {
-                std::cout << "*";
+                if(spieler->verloreneHasen < spieler->maximaleHasen)
+                    nochaktivehasen= true;
             }
-            else if(z.istLoch)
-                std::cout << "o";
-            else
-                std::cout << "_";
-        }
-        std::cout << std::endl;
-        Spielzug++;
+            if(!nochaktivehasen)
+            {
+                keine_aktiven_hasen_mehr = true;
+                std::cout << "Keine Hasen Mehr" << std::endl;
+            }
+            std::cout << "Spielrunde:"<<Spielzug << " ";
+            for(int x =0; x < m_feld.felder.size(); x++)
+            {
+                auto z= m_feld.felder[x];
+                if(z.istBesetzt)
+                {
+                    std::cout << "*";
+                }
+                else if(z.istLoch)
+                    std::cout << "o";
+                else
+                    std::cout << "_";
+            }
+            std::cout << std::endl;
+            Spielzug++;
 
-        for(auto& obj:allRenderAbleObjects)
-        {
-            obj->update();
-            obj->render();
+            for(auto& obj:m_toRender)
+            {
+                obj->update();
+                obj->render();
+            }
         }
     }
 }
