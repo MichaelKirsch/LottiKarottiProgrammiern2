@@ -8,8 +8,10 @@
 #include <iostream>
 #include <memory>
 
-struct Hase
+struct Hase : public Renderable
 {
+    void update(){};
+    void render(){};
     bool feldBesetztOderEnde(Karte& karte, Spielfeld& feld)
     {
         if(karte+feldID<=feld.felder.size())
@@ -21,17 +23,19 @@ struct Hase
     int feldID;
 };
 
-class Spieler {
+class Spieler : public Renderable {
 public:
     Spieler(int SpielerID,int anzahlHasen);
+    void update(){};
+    void render(){};
     bool zieht(Spielfeld& feld, Kartenstapel& stapel);//spieler zieht. return 1 wenn er gewinnt
-
     ~Spieler(){std::cout << "Spieler wird erased"<<std::endl;};
     int letzterErzeugterHase=0;
     int maximaleHasen =0;
     int verloreneHasen = 0;
     int weitester_hase = 0;
     int getID(){ return m_ID;};
+    std::vector<Hase>& getHasen(){return hasen;};
 private:
     const int m_ID;
     std::vector<Hase> hasen;

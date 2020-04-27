@@ -22,10 +22,7 @@ bool Spieler::zieht(Spielfeld &feld, Kartenstapel &stapel) {
             it->aktiv = false;
             it-> tot = true;
         }
-
     }
-
-
 
     Karte gezogeneKarte = stapel.karteZiehen();
 

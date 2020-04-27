@@ -4,9 +4,15 @@
 
 Spiel::Spiel(int spielerAnzahl, int felder, int hasenprospieler) {
     feld.erzeugen(felder);
+    allRenderAbleObjects.emplace_back(&feld);
     for(int x =0;x<spielerAnzahl;x++)
     {
-        alleSpieler.emplace_back(std::make_unique<Spieler>(x,hasenprospieler));
+        auto pointerzuSpieler = alleSpieler.emplace_back(std::make_shared<Spieler>(x,hasenprospieler));
+        allRenderAbleObjects.emplace_back(pointerzuSpieler.get());
+        for(auto& hase:pointerzuSpieler->getHasen())
+        {
+            allRenderAbleObjects.emplace_back(&hase);
+        }
     }
 }
 
@@ -51,5 +57,11 @@ void Spiel::run() {
         }
         std::cout << std::endl;
         Spielzug++;
+
+        for(auto& obj:allRenderAbleObjects)
+        {
+            obj->update();
+            obj->render();
+        }
     }
 }

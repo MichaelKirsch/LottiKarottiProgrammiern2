@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <vector>
+#include "Renderable.h"
 struct Feld
 {
     Feld(int id):position(id){
@@ -15,9 +16,11 @@ struct Feld
 };
 
 
-class Spielfeld {
+class Spielfeld : public Renderable{
 public:
     Spielfeld(){};
+    void update(){};
+    void render(){};
     void erzeugen(int size=24);
     void drehenKarotte();
     ~Spielfeld() = default;
